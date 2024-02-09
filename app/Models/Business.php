@@ -32,4 +32,14 @@ class Business extends Model
     {
         return $this->hasMany(Banner::class, 'business_id');
     }
+
+    public function promotions()
+    {
+        return $this->hasMany(Promotions::class, 'business_id');
+    }
+
+    public function cards()
+    {
+        return $this->hasMany(Cards::class, 'business_id');
+    }
 }
