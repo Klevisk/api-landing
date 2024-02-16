@@ -54,7 +54,7 @@ public function login(LoginRequest $request){
     return response()->json([
         'res' => true,
         'token' => $token,
-        'usuario' => $user
+        'user' => $user
     ],  200);
 }
 //LogOut--------------------------------------------------------------*
