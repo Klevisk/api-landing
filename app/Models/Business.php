@@ -15,6 +15,7 @@ class Business extends Model
     'address',
     'phone',
     'logo',
+    'slug',
     'user_id',
     ] ;
 

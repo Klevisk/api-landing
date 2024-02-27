@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\PromotionsController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\UserController;
 
@@ -35,5 +36,8 @@ Route::resource('promotions', PromotionsController::class);
 Route::resource('cards', CardsController::class);
 Route::resource('socials', SocialController::class);
 Route::resource('users', UserController::class);
+
+Route::get('/settings', [SettingController::class, 'getConfiguration']);
+Route::post('/settings/update-status', [SettingController::class, 'updateStatus']);
 
 

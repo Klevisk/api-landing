@@ -16,6 +16,7 @@ class CreateBusinessesTable extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('logo');
+            $table->string('slug')->unique();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

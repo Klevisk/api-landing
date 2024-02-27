@@ -23,6 +23,7 @@ class StoreRequest extends FormRequest
                 'name' => 'required|string',
                 'email' => 'required|email|unique:businesses',
                 'document' => 'required|string|unique:businesses',
+                'slug' => 'required|string|unique:businesses',
                 'address' => 'required|string',
                 'phone' => 'required|string',
                 'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

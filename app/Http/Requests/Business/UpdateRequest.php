@@ -19,6 +19,7 @@ class UpdateRequest extends FormRequest
             'name' => 'string',
             'email' => 'email',
             'document' => 'string',
+            'slug' => 'string',
             'address' => 'string',
             'phone' => 'string',
             'logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',

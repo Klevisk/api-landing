@@ -6,6 +6,7 @@ use App\Http\Requests\Banner\StoreRequest;
 use App\Http\Requests\Banner\UpdateRequest;
 use App\Models\Banner;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Storage;
 
 
 class BannerController extends Controller
@@ -33,7 +34,7 @@ class BannerController extends Controller
         try {
             $validatedData = $request->validated();
 
-            $bannerPath = $this->storeImage($request->file('image'));
+            $bannerPath = $this->storeBanner($request->file('image'));
 
             $banners = new Banner($validatedData);
             $banners->image = $bannerPath;
@@ -84,17 +85,24 @@ class BannerController extends Controller
         }
     }
 
-    private function storeImage($file)
-    {
-        $imageName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('banners_images'), $imageName);
-        return 'banners_images/' . $imageName;
-    }
+    private function storeBanner($file)
+{
+
+    $bannerName = time() . '_' . $file->getClientOriginalName();
+
+
+    $path = $file->storeAs('', $bannerName, 'banners');
+
+
+    $url = Storage::disk('banners')->url($path);
+
+    return $url;
+}
 
     private function deleteImage($bannerPath)
     {
         if ($bannerPath && file_exists(public_path($bannerPath))) {
-            unlink(public_path($bannerPath));
+            unlink(storage_path($bannerPath));
         }
     }
 }
