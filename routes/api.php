@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/contacto/enviar-mensaje', [ContactoController::class, 'enviarMensaje']);
     Route::resource('gallery', GalleryController::class);
-    Route::resource('business', BusinessController::class);
+
     Route::resource('banner', BannerController::class);
     Route::resource('promotions', PromotionsController::class);
     Route::resource('cards', CardsController::class);
@@ -34,5 +34,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-
+Route::resource('business', BusinessController::class);
 Route::post('login', [AuthController::class, 'login']);

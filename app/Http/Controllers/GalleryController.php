@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 use App\Models\Gallery;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -34,12 +35,13 @@ class GalleryController extends Controller
     public function store(StoreRequest $request)
     {
         try {
+
             $validatedData = $request->validated();
 
-            $imageName = $this->storeImage($request->file('image'));
+            $galleryPath = $this->storeGallery($request->file('image'));
 
             $gallery = new Gallery($validatedData);
-            $gallery->image = $imageName;
+            $gallery->image = $galleryPath;
             $gallery->save();
 
             return response()->json(['message' => 'Galería creada con éxito', 'gallery' => $gallery], 201);
@@ -52,17 +54,23 @@ class GalleryController extends Controller
 {
     try {
         $gallery = Gallery::findOrFail($id);
+
         $validatedData = $request->all();
+
+        $gallery->fill($validatedData);
 
         if ($request->hasFile('image')) {
             $this->deleteImage($gallery->image);
-            $gallery->image = $this->storeImage($request->file('image'));
+
+            $galleryPath = $this->storeGallery($request->file('image'));
+            $gallery->image = $galleryPath;
+
         }
-
-        unset($validatedData['image']);
-
-        $gallery->fill($validatedData);
         $gallery->save();
+
+        $gallery->refresh();
+
+
 
         return response()->json(['message' => 'Galería actualizada con éxito', 'gallery' => $gallery], 200);
     } catch (ModelNotFoundException $e) {
@@ -87,18 +95,23 @@ class GalleryController extends Controller
         }
     }
 
-    private function storeImage($file)
+    private function storeGallery($file)
     {
-        $imageName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('gallery_images'), $imageName);
-        return 'gallery_images/' . $imageName;
+        $galleryName = time() . '_' . $file->getClientOriginalName();
+
+        $path = $file->storeAs('', $galleryName, 'gallerys');
+
+        $url = Storage::disk('gallerys')->url($path);
+
+        return $url;
     }
 
-    private function deleteImage($imagePath)
+    private function deleteImage($galleryPath)
     {
-        if ($imagePath && file_exists(public_path($imagePath))) {
-            unlink(public_path($imagePath));
+        if ($galleryPath && Storage::disk('gallerys')->exists($galleryPath)) {
+            Storage::disk('gallerys')->delete($galleryPath);
         }
+
     }
 
 

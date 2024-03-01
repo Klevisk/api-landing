@@ -47,29 +47,30 @@ class BannerController extends Controller
     }
 
     public function update(UpdateRequest $request, $id)
-    {
-        try {
-            $banners = Banner::findOrFail($id);
-            $validatedData = $request->validated();
+{
+    try {
+        $banner = Banner::findOrFail($id);
 
-            if ($request->hasFile('image')) {
-                $this->deleteImage($banners->image);
-                $banners->image = $this->storeImage($request->file('image'));
-            }
+        $validatedData = $request->validated();
 
-            unset($validatedData['image']);
+        $banner->fill($validatedData);
+        if ($request->hasFile('image')) {
+            $this->deleteImage($banner->image);
 
-            $banners->fill($validatedData);
-            $banners->save();
-
-            return response()->json(['message' => 'Banner actualizado con éxito', 'banner' => $banners], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Banner no encontrado'], 404);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            $bannerPath = $this->storeBanner($request->file('image'));
+            $banner->image = $bannerPath;
         }
-    }
 
+        $banner->save();
+
+
+        $banner->refresh();
+
+        return response()->json(['message' => 'Banner actualizado con éxito', 'banner' => $banner], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
     public function destroy($id)
     {
         try {
@@ -99,10 +100,10 @@ class BannerController extends Controller
     return $url;
 }
 
-    private function deleteImage($bannerPath)
-    {
-        if ($bannerPath && file_exists(public_path($bannerPath))) {
-            unlink(storage_path($bannerPath));
-        }
+private function deleteImage($bannerPath)
+{
+    if ($bannerPath && Storage::disk('banners')->exists($bannerPath)) {
+        Storage::disk('banners')->delete($bannerPath);
     }
+}
 }

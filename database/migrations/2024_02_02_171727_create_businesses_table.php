@@ -19,6 +19,8 @@ class CreateBusinessesTable extends Migration
             $table->string('slug')->unique();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->date('renewal_date')->default(now()->addMonth());
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class Business extends Model
     'logo',
     'slug',
     'user_id',
+
     ] ;
 
     public function user()

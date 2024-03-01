@@ -6,6 +6,7 @@ use App\Models\Cards;
 use App\Http\Requests\Card\StoreRequest;
 use App\Http\Requests\Card\UpdateRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Storage;
 
 class CardsController extends Controller
 {
@@ -32,7 +33,7 @@ class CardsController extends Controller
         try {
             $validatedData = $request->validated();
 
-            $cardsPath = $this->storeImage($request->file('image'));
+            $cardsPath = $this->storeCard($request->file('image'));
 
             $cards = new Cards($validatedData);
             $cards->image = $cardsPath;
@@ -48,17 +49,24 @@ class CardsController extends Controller
     {
         try {
             $cards = Cards::findOrFail($id);
+
             $validatedData = $request->validated();
+
+
+            $cards->fill($validatedData);
 
             if ($request->hasFile('image')) {
                 $this->deleteImage($cards->image);
-                $cards->image = $this->storeImage($request->file('image'));
+
+                $cardPath = $this->storeCard($request->file('image'));
+                $cards->image = $cardPath;
             }
 
-            unset($validatedData['image']);
-
-            $cards->fill($validatedData);
             $cards->save();
+
+            $cards->refresh();
+
+
 
             return response()->json(['message' => 'Carta actualizada con éxito', 'cards' => $cards], 200);
         } catch (ModelNotFoundException $e) {
@@ -83,17 +91,21 @@ class CardsController extends Controller
         }
     }
 
-    private function storeImage($file)
+    private function storeCard($file)
     {
-        $imageName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('cards_images'), $imageName);
-        return 'cards_images/' . $imageName;
+        $cardName = time() . '_' . $file->getClientOriginalName();
+
+        $path = $file->storeAs('', $cardName, 'cards');
+
+        $url = Storage::disk('cards')->url($path);
+
+        return $url;
     }
 
     private function deleteImage($cardsPath)
     {
-        if ($cardsPath && file_exists(public_path($cardsPath))) {
-            unlink(public_path($cardsPath));
+        if ($cardsPath && Storage::disk('cards')->exists($cardsPath)) {
+            Storage::disk('cards')->delete($cardsPath);
         }
     }
 }

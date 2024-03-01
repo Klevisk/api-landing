@@ -60,6 +60,20 @@ return [
             'visibility' => 'public',
         ],
 
+        'cards' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/cards'),
+            'url' => 'cards',
+            'visibility' => 'public',
+        ],
+
+        'gallerys' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/gallerys'),
+            'url' => 'gallerys',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
