@@ -18,6 +18,7 @@ class DashboardController extends Controller
     $domain = $request->getHost();
 
     $business = Business::where('slug', $domain)->first();
+
     if (!$business) {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
@@ -32,6 +33,7 @@ class DashboardController extends Controller
     $gallery = Gallery::all();
     $promo = Promotions::all();
     $soci = Social::all();
+    $business = Business::all();
 
 
      dd($domain);

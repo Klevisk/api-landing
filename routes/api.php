@@ -15,11 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    Route::post('logout', [AuthController::class, 'logOut']);
+
 
     Route::post('/contacto/enviar-mensaje', [ContactoController::class, 'enviarMensaje']);
     Route::resource('gallery', GalleryController::class);
@@ -32,7 +29,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/settings', [SettingController::class, 'getConfiguration']);
     Route::post('/settings/update-status', [SettingController::class, 'updateStatus']);
     Route::post('register', [AuthController::class, 'register']);
+    Route::delete('logout', [AuthController::class, 'logOut']);
 });
+
 
 Route::resource('business', BusinessController::class);
 Route::post('login', [AuthController::class, 'login']);
